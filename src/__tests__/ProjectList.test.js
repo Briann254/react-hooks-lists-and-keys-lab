@@ -1,41 +1,32 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
-import ProjectList from "../components/ProjectList";
+import NavBar from "../components/NavBar";
 
-const projects = [
-  {
-    id: 1,
-    name: "Reciplease",
-    about: "A recipe tracking app",
-    technologies: ["Rails", "Bootstrap CSS"],
-  },
-  {
-    id: 2,
-    name: "Kibbles N Bitz",
-    about: "Tinder for dogs",
-    technologies: ["React", "Redux"],
-  },
-  {
-    id: 3,
-    name: "Alienwares",
-    about: "Etsy for aliens",
-    technologies: ["React", "Redux", "Rails"],
-  },
-];
+test("each <a> element has a unique key prop", () => {
+  const errorSpy = jest.spyOn(global.console, "error");
 
-test("gives each <ProjectItem> a key based on the project id", () => {
-  let errorSpy = jest.spyOn(global.console, "error");
-  render(<ProjectList projects={projects} />);
+  render(<NavBar />);
 
   expect(errorSpy).not.toHaveBeenCalled();
 
   errorSpy.mockRestore();
 });
 
-test("renders a <ProjectItem> for each project passed in as a prop", () => {
-  render(<ProjectList projects={projects} />);
+test("renders three <a> elements", () => {
+  const { container } = render(<NavBar />);
+  expect(container.querySelectorAll("a")).toHaveLength(3);
+});
 
-  for (const project of projects) {
-    expect(screen.queryByText(project.name)).toBeInTheDocument();
-  }
+test("displays the correct text for each <a> element", () => {
+  render(<NavBar />);
+  expect(screen.queryByText(/home/i)).toBeInTheDocument();
+  expect(screen.queryByText(/about/i)).toBeInTheDocument();
+  expect(screen.queryByText(/projects/i)).toBeInTheDocument();
+});
+
+test("each <a> element has the correct href attribute", () => {
+  render(<NavBar />);
+  expect(screen.queryByText(/home/i).href).toContain("#home");
+  expect(screen.queryByText(/about/i).href).toContain("#about");
+  expect(screen.queryByText(/projects/i).href).toContain("#projects");
 });
